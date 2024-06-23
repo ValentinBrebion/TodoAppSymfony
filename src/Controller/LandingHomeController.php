@@ -33,7 +33,7 @@ class LandingHomeController extends AbstractController
     }
 
     #[Route('/homePage', name: 'app_homepage')]
-    public function Home(): Response
+    public function homePage(): Response
     {
         return $this->render('landing_home/homePage.html.twig', [
             
