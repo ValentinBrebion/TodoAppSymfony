@@ -1,80 +1,109 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
 <style>
-    .introductionTodo { 
-        height: 100vh;
-        padding: 3rem;
-        background: linear-gradient(300deg,deepskyblue,darkviolet,blue);
-        background-size: 180% 180%;
-        animation: gradient-animation 18s ease infinite;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: white;
-    }
-    @keyframes gradient-animation {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-    .introductionTodo__title {
-        font-size: 5rem;
-        margin-top:0px;
-    }
-    .introductionTodo__description {
-        font-size: 2rem;
-        margin-top:0px;
-    }
-    .introductionTodo__CTA {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between; /* Espace entre les boutons */
-        align-items: center; /* Centrer verticalement */
-        width: 50%; /* Taille du conteneur des boutons */
-        max-width: 500px; /* Largeur maximale */
-        margin-top: 2rem; /* Marge en haut pour séparer des autres éléments */
-    }
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
-    .introductionTodo__CTA a {
-        flex: 1;
-        margin: 0 1rem; /* Espacement entre les boutons */
-        padding: 1rem 2rem; /* Taille des boutons */
-        background-color: white;
-        color: blue;
-        border: none;
-        border-radius: 0.5rem;
-        font-size: 1.2rem;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .introductionTodo__CTA button:hover {
-        background-color: lightgray;
-    }
-
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
 </style>
-
 <main>
-    <section class="introductionTodo">
-        <h1 class="introductionTodo__title">Bienvenue sur la todoList du futur !</h1>
+    <div class="h-screen bg-white">
+        <header class="absolute inset-x-0 top-0 z-50">
+            <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+                <div class="flex lg:flex-1">
+                    <a href="#" class="-m-1.5 p-1.5">
+                        <span class="sr-only">Your Company</span>
+                        <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="">
+                    </a>
+                </div>
+                <div class="flex lg:hidden">
+                    <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="hidden lg:flex lg:gap-x-12">
+                    <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Product</a>
+                    <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Features</a>
+                    <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
+                    <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
+                </div>
+                <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+                    <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">&rarr;</span></a>
+                </div>
+            </nav>
+            <!-- Mobile menu, show/hide based on menu open state. -->
+            <div class="lg:hidden" role="dialog" aria-modal="true">
+                <!-- Background backdrop, show/hide based on slide-over state. -->
+                <div class="fixed inset-0 z-50"></div>
+                <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+                    <div class="flex items-center justify-between">
+                        <a href="#" class="-m-1.5 p-1.5">
+                            <span class="sr-only">Your Company</span>
+                            <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="">
+                        </a>
+                        <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
+                            <span class="sr-only">Close menu</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-6 flow-root">
+                        <div class="-my-6 divide-y divide-gray-500/10">
+                            <div class="space-y-2 py-6">
+                                <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Product</a>
+                                <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Features</a>
+                                <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Marketplace</a>
+                                <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Company</a>
+                            </div>
+                            <div class="py-6">
+                                <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        <p class="introductionTodo__description">Retrouvez l'ensemble des fonctionnalités listés sur la page et connectez vous pour créer votre propre page
-        todoList !</p>
+        <div class="relative isolate px-6 pt-14 lg:px-8">
+            <!-- Fond animé -->
+            <div class="absolute inset-0 -z-10 h-full w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient-x"></div>
+            <div class="absolute inset-0 -z-10 h-full w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-70"></div>
 
-        <div class="introductionTodo__CTA">
-            <a href="{{ path('app_connexion') }}">Se connecter</a>
-            <a href="{{ path('app_inscription') }}">S'inscrire</a>
+            <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+                <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+                    <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-white ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                        Announcing our next round of funding. <a href="#" class="font-semibold text-indigo-600"><span class="absolute inset-0" aria-hidden="true"></span>Read more <span aria-hidden="true">&rarr;</span></a>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Data to enrich your online business</h1>
+                    <p class="mt-6 text-lg leading-8 text-white">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua.</p>
+                    <div class="mt-10 flex items-center justify-center gap-x-6">
+                        <a href="{{ path('app_connexion') }}" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">connexion</a>
+                        <a href="{{ path('app_inscription') }}" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">s'inscrire</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
 </main>
+
 {% endblock %}
