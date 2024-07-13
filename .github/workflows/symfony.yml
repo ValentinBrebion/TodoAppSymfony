@@ -63,7 +63,7 @@ jobs:
       - name: Setup Database
         run:
           composer install
-          php bin/console doctrine:database:drop --force --if-exists --env=todoapp
+          php bin/console doctrine:database:drop --force --env=todoapp
           php bin/console doctrine:database:create --env=todoapp --no-interaction
           php bin/console doctrine:migration:migrate --env=todoapp --no-interaction
           php bin/console doctrine:fixture:load --env=todoapp --no-interaction
