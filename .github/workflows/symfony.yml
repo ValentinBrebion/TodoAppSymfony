@@ -50,6 +50,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Composer Dependencies
         run: composer install
+      - name: Debug Database Connection
+        run: |
+          echo "Testing database connection..."
+          mysql -h mariadb -u root -proot -P 3306 -e "SHOW DATABASES;"
       - name: Setup Database
         run: |
           php bin/console doctrine:database:drop --force --if-exists --env=test
