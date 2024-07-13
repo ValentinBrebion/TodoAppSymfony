@@ -10,6 +10,7 @@ on:
 
 jobs:
   security-checker:
+    runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
       - name: Checkout code
@@ -18,6 +19,7 @@ jobs:
         run: local-php-security-checker --path=./composer.lock
 
   phpcs:
+    runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
       - name: Checkout code
@@ -26,6 +28,7 @@ jobs:
         run: phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
 
   phpstan:
+    runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
       - name: Checkout code
@@ -36,6 +39,7 @@ jobs:
         run: phpstan analyse ./src --level 3
 
   twig-lint:
+    runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
       - name: Checkout code
@@ -44,6 +48,7 @@ jobs:
         run: twig-lint lint ./templates
 
   phpunit:
+    runs-on: ubuntu-latest
     container: nicolasunivlr/php:lp2022
     services:
       mariadb:
