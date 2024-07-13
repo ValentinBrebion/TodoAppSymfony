@@ -49,7 +49,7 @@ jobs:
 
   phpunit:
     runs-on: ubuntu-latest
-    container: jitesoft/phpunit
+    container: jitesoft/phpunit:8.2
     services:
       mariadb:
         image: mariadb:10.6
