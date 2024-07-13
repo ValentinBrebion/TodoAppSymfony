@@ -5,15 +5,19 @@ if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');
 }
 
+// Check if PHPUnit is directly installed via Composer
 if (is_file(dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit')) {
     define('PHPUNIT_COMPOSER_INSTALL', dirname(__DIR__).'/vendor/autoload.php');
+    echo "Using PHPUnit directly from Composer installation.\n";
     require PHPUNIT_COMPOSER_INSTALL;
     PHPUnit\TextUI\Command::main();
 } else {
+    // Check if Symfony PHPUnit Bridge is used
     if (!is_file(dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php')) {
         echo "Unable to find the `simple-phpunit.php` script in `vendor/symfony/phpunit-bridge/bin/`.\n";
         exit(1);
     }
 
+    echo "Using Symfony PHPUnit Bridge.\n";
     require dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php';
 }
