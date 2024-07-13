@@ -2,6 +2,12 @@ stages:
   - test
   - deploy
 
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
 .common: &common
   image: jakzal/phpqa:php8.1
   stage: test
