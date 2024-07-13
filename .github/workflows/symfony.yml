@@ -64,8 +64,8 @@ jobs:
         run: composer install
       - name: Install PDO MariaDB Extension
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libmariadb-dev
+          apt-get update
+          apt-get install -y libmariadb-dev
           docker-php-ext-configure pdo_mysql --with-pdo-mysql=mariadb
           docker-php-ext-install pdo pdo_mysql
       - name: Setup Database
