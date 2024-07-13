@@ -14,48 +14,48 @@ on:
   only:
       - merge_requests
       - master
+jobs:
+  security-checker:
+    <<: *common
+    script:
+      - local-php-security-checker --path=./composer.lock
 
-security-checker:
-  <<: *common
-  script:
-    - local-php-security-checker --path=./composer.lock
+  phpcs:
+    <<: *common
+    script:
+      - phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
 
-phpcs:
-  <<: *common
-  script:
-    - phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
+  phpstan:
+    <<: *common
+    before_script:
+      - composer install
+    script:
+      - phpstan analyse ./src --level 3
 
-phpstan:
-  <<: *common
-  before_script:
-    - composer install
-  script:
-    - phpstan analyse ./src --level 3
+  twig-lint:
+    <<: *common
+    script:
+      - twig-lint lint ./templates
 
-twig-lint:
-  <<: *common
-  script:
-    - twig-lint lint ./templates
-
-phpunit:
-  image: nicolasunivlr/php:lp2022
-  stage: test
-  only:
-    - merge_requests
-    - main
-  services:
-  - name: mariadb:10.6
-    alias: mariadb
-  variables:
-    MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: todoapp
-    DATABASE_URL: "mysql://root:root@mariadb:3306/todoapp?serverVersion=10.6.7-MariaDB&charset=utf8"
-  before_script:
-    - composer install
-    - php bin/console doctrine:database:drop --force --if-exists --env=test
-    - php bin/console doctrine:database:create --env=test --no-interaction
-    - php bin/console doctrine:migration:migrate --env=test --no-interaction
-    - php bin/console doctrine:fixture:load --env=test --no-interaction
-  script:
-    - php bin/phpunit
+  phpunit:
+    image: nicolasunivlr/php:lp2022
+    stage: test
+    only:
+      - merge_requests
+      - main
+    services:
+    - name: mariadb:10.6
+      alias: mariadb
+    variables:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: todoapp
+      DATABASE_URL: "mysql://root:root@mariadb:3306/todoapp?serverVersion=10.6.7-MariaDB&charset=utf8"
+    before_script:
+      - composer install
+      - php bin/console doctrine:database:drop --force --if-exists --env=test
+      - php bin/console doctrine:database:create --env=test --no-interaction
+      - php bin/console doctrine:migration:migrate --env=test --no-interaction
+      - php bin/console doctrine:fixture:load --env=test --no-interaction
+    script:
+      - php bin/phpunit
 
