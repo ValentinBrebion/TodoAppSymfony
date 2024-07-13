@@ -48,17 +48,24 @@ jobs:
     runs-on: ubuntu-latest
     container: nicolasunivlr/php:lp2022
     services:
-      - name: mariadb:10.6
-        alias: mariadb
-    variables:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: todoapp
-      DATABASE_URL: "mysql://root:root@mariadb:3306/todoapp?serverVersion=10.6.7-MariaDB&charset=utf8"
-    before_script:
-      - composer install
-      - php bin/console doctrine:database:drop --force --if-exists --env=todoapp
-      - php bin/console doctrine:database:create --env=todoapp --no-interaction
-      - php bin/console doctrine:migration:migrate --env=todoapp --no-interaction
-      - php bin/console doctrine:fixture:load --env=todoapp --no-interaction
-    script:
-      - php bin/phpunit
+      mariadb:
+        image: mariadb:10.6
+        options: --health-cmd "mysqladmin ping --silent" --health-interval 10s --health-timeout 5s --health-retries 3
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: todoapp
+    env:
+      DATABASE_URL: "mysql://root:root@localhost:3306/todoapp?serverVersion=10.6.7-MariaDB&charset=utf8"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Database
+        run:
+          composer install
+          php bin/console doctrine:database:drop --force --if-exists --env=todoapp
+          php bin/console doctrine:database:create --env=todoapp --no-interaction
+          php bin/console doctrine:migration:migrate --env=todoapp --no-interaction
+          php bin/console doctrine:fixture:load --env=todoapp --no-interaction
+      - name: Run PHPUnit
+        run: php bin/phpunit
