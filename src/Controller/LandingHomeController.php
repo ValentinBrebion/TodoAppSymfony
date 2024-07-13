@@ -12,8 +12,7 @@ class LandingHomeController extends AbstractController
     public function index(): Response
     {
         return $this->render(
-            'landing_home/index.html.twig', [     
-            ]
+            'landing_home/index.html.twig'
         );
     }
 
@@ -21,8 +20,7 @@ class LandingHomeController extends AbstractController
     public function connexion(): Response
     {
         return $this->render(
-            'landing_home/todoConnexion.html.twig', [    
-            ]
+            'landing_home/todoConnexion.html.twig'
         );
     }
 
@@ -30,8 +28,7 @@ class LandingHomeController extends AbstractController
     public function inscription(): Response
     {
         return $this->render(
-            'landing_home/todoInscription.html.twig', [      
-            ]
+            'landing_home/todoInscription.html.twig'
         );
     }
 
@@ -39,8 +36,7 @@ class LandingHomeController extends AbstractController
     public function homePage(): Response
     {
         return $this->render(
-            'landing_home/homePage.html.twig', [
-            ]
+            'landing_home/homePage.html.twig'
         );
     }
 }
