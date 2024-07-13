@@ -55,9 +55,9 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: devops-test
+          MYSQL_DATABASE: todoapp
     env:
-      DATABASE_URL: "mysql://root:root@localhost:3306/devops-test?serverVersion=10.6.7-MariaDB&charset=utf8"
+      DATABASE_URL: "mysql://root:root@localhost:3306/todoapp?serverVersion=10.6.7-MariaDB&charset=utf8"
     steps:
       - uses: actions/checkout@v4
       - name: Install Composer Dependencies
