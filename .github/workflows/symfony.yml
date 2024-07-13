@@ -62,6 +62,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Composer Dependencies
         run: composer install
+      - name: Install PDO MySQL Extension
+        run: docker-php-ext-install pdo pdo_mysql
       - name: Setup Database
         run: |
           php bin/console doctrine:database:drop --force --if-exists --env=test
