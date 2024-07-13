@@ -16,7 +16,7 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
-        $AdminUser = new User("",[],"","",new \DateTimeImmutable('2024-05-05'));
+        $AdminUser = new User(" ",[ ]," "," ",new \DateTimeImmutable('2024-05-05'));
         $AdminUser->setEmail("test@gmail.com");
         $AdminUser->setRoles(['ROLE_ADMIN']);
         $AdminUser->setPassword($this->passwordHasher->hashPassword($AdminUser, "test"));
