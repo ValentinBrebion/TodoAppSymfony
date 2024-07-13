@@ -64,8 +64,7 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install
       - name: Setup Database
-        run: |
-          php bin/console doctrine:database:drop --force --if-exists --env=test
+        run:
           php bin/console doctrine:database:create --env=test --no-interaction
           php bin/console doctrine:migration:migrate --env=test --no-interaction
           php bin/console doctrine:fixture:load --env=test --no-interaction
