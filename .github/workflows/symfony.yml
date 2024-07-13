@@ -59,21 +59,23 @@ jobs:
         ports:
           - 8306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Install Composer Dependencies
-        run: composer install
-      - name: Setup Database
-        run: |
-          php bin/console doctrine:database:drop --force --if-exists --env=test
-          php bin/console doctrine:database:create --env=test --no-interaction
-          php bin/console doctrine:migrations:migrate --env=test --no-interaction
-          php bin/console doctrine:fixtures:load --env=test --no-interaction
-      - name: Run PHPUnit Tests
-        run: php bin/phpunit
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+        - name: Install Composer Dependencies
+          run: composer install
+        - name: Setup Database
+          run: |
+            php bin/console doctrine:database:drop --force --if-exists --env=test
+            php bin/console doctrine:database:create --env=test --no-interaction
+            php bin/console doctrine:migrations:migrate --env=test --no-interaction
+            php bin/console doctrine:fixtures:load --env=test --no-interaction
+        - name: Run PHPUnit Tests
+          run: php bin/phpunit
 
   deploy:
     runs-on: ubuntu-latest
+    needs: phpunit  # Ensure deploy runs after phpunit job completes successfully
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
