@@ -64,10 +64,7 @@ jobs:
         run: composer install
       - name: Install PDO extension
         run:
-          apt-get update
-          apt-get install -y libmysqlclient-dev
-          docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd
-          docker-php-ext-install pdo pdo_mysql
+          apk update && apk add --no-cache mariadb-dev && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && docker-php-ext-install pdo pdo_mysql
       - name: Setup Database
         run:
           php bin/console doctrine:database:drop --force --if-exists --env=test
