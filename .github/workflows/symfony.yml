@@ -51,7 +51,7 @@ jobs:
   phpunit:
     runs-on: ubuntu-latest
     container:
-      image: nicolasunivlr/php:lp2022
+      image: jitesoft/phpunit
     services:
       mariadb:
         image: mariadb:10.6
