@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @param string|null $username
      * @param \DateTimeImmutable|null $createdAt
      */
-    public function __construct(?string $email, array $roles, ?string $password, ?string $username,?\DateTimeImmutable  $createdAt)
+    public function __construct(?string $email, array $roles, ?string $password, ?string $username, ?\DateTimeImmutable $createdAt)
     {
         $this->email = $email;
         $this->roles = $roles;
@@ -150,8 +150,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function __toString() {
+    public function __toString() 
+    {
         return $this->getUsername();
     }
-
 }
