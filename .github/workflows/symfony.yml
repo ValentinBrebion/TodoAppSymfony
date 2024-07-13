@@ -70,18 +70,3 @@ jobs:
           php bin/console doctrine:fixture:load --env=test --no-interaction
       - name: Run PHPUnit
         run: php bin/phpunit
-
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    container: registry.gitlab.com/pipeline-components/deployer:latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup SSH
-        run: |
-          eval $(ssh-agent -s)
-          echo "${{ secrets.PROD_KEY }}" | tr -d "\r" | ssh-add -
-      - name: Deploy
-        run: dep deploy
-      - name: Migrate Database
-        run: dep database:migrate
