@@ -1,38 +1,39 @@
-name: Symfony CI
+name: CI
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
   pull_request:
-    branches:
-      - master
+    branches: [ "master" ]
+
+permissions:
+  contents: read
 
 jobs:
   security-checker:
     runs-on: ubuntu-latest
-    container: jakzal/phpqa:php8.1
+    container:
+      image: jakzal/phpqa:php8.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Run local-php-security-checker
         run: local-php-security-checker --path=./composer.lock
 
   phpcs:
     runs-on: ubuntu-latest
-    container: jakzal/phpqa:php8.1
+    container:
+      image: jakzal/phpqa:php8.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Run PHPCS
         run: phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
 
   phpstan:
     runs-on: ubuntu-latest
-    container: jakzal/phpqa:php8.1
+    container:
+      image: jakzal/phpqa:php8.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Install Composer Dependencies
         run: composer install
       - name: Run PHPStan
@@ -40,33 +41,45 @@ jobs:
 
   twig-lint:
     runs-on: ubuntu-latest
-    container: jakzal/phpqa:php8.1
+    container:
+      image: jakzal/phpqa:php8.1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Run Twig Lint
         run: twig-lint lint ./templates
 
   phpunit:
     runs-on: ubuntu-latest
-    container: nicolasunivlr/php:lp2022
+    container:
+      image: nicolasunivlr/php:lp2022
     services:
       mariadb:
         image: mariadb:10.6
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: devops-test
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          MYSQL_DATABASE: todoapp
+    env:
+      DATABASE_URL: "mysql://root:root@mariadb:3306/todoapp?serverVersion=10.6.7-MariaDB&charset=utf8"
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Wait for MariaDB
+        run: |
+          echo "Waiting for MariaDB..."
+          while ! mysqladmin ping -h"mariadb" --silent; do
+            sleep 1
+          done
       - name: Install Composer Dependencies
         run: composer install
-      - name: Setup Database
+      - name: Prepare Database
         run: |
           php bin/console doctrine:database:drop --force --if-exists --env=test
           php bin/console doctrine:database:create --env=test --no-interaction
-          php bin/console doctrine:migrations:migrate --env=test --no-interaction
-          php bin/console doctrine:fixtures:load --env=test --no-interaction
-      - name: Run PHPUnit Tests
+          php bin/console doctrine:migration:migrate --env=test --no-interaction
+          php bin/console doctrine:fixture:load --env=test --no-interaction
+      - name: Run PHPUnit
         run: php bin/phpunit
