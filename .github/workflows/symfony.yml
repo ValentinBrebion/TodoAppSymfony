@@ -1,61 +1,59 @@
-name: Symfony CI
+stages:
+  - test
+  - deploy
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
+.common: &common
+  image: jakzal/phpqa:php8.1
+  stage: test
+  only:
+      - merge_requests
       - master
 
 jobs:
   security-checker:
+    runs-on: ubuntu-latest
     image: jakzal/phpqa:php8.1
     stage: test
-    only:
-      - merge_requests
-      - master
-    script:
-      - local-php-security-checker --path=./composer.lock
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run local-php-security-checker
+        run: local-php-security-checker --path=./composer.lock
 
   phpcs:
+    runs-on: ubuntu-latest
     image: jakzal/phpqa:php8.1
     stage: test
-    only:
-      - merge_requests
-      - master
-    script:
-      - phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PHPCS
+        run: phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
 
   phpstan:
+    runs-on: ubuntu-latest
     image: jakzal/phpqa:php8.1
     stage: test
-    only:
-      - merge_requests
-      - master
-    before_script:
-      - composer install
-    script:
-      - phpstan analyse ./src --level 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Composer Dependencies
+        run: composer install
+      - name: Run PHPStan
+        run: phpstan analyse ./src --level 3
 
   twig-lint:
+    runs-on: ubuntu-latest
     image: jakzal/phpqa:php8.1
     stage: test
-    only:
-      - merge_requests
-      - master
-    script:
-      - twig-lint lint ./templates
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Twig Lint
+        run: twig-lint lint ./templates
 
   phpunit:
     image: nicolasunivlr/php:lp2022
     stage: test
-    only:
-      - merge_requests
-      - main
     services:
-      - name: mariadb:10.6
-        alias: mariadb
+    - name: mariadb:10.6
+      alias: mariadb
     variables:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: todoapp
@@ -64,7 +62,8 @@ jobs:
       - composer install
       - php bin/console doctrine:database:drop --force --if-exists --env=test
       - php bin/console doctrine:database:create --env=test --no-interaction
-      - php bin/console doctrine:migrations:migrate --env=test --no-interaction
-      - php bin/console doctrine:fixtures:load --env=test --no-interaction
+      - php bin/console doctrine:migration:migrate --env=test --no-interaction
+      - php bin/console doctrine:fixture:load --env=test --no-interaction
     script:
       - php bin/phpunit
+
