@@ -53,7 +53,7 @@ jobs:
       - name: Debug Database Connection
         run: |
           echo "Testing database connection..."
-          mysql -h mariadb -u root -proot -P 3306 -e "SHOW DATABASES;"
+          telnet mariadb 3306
       - name: Setup Database
         run: |
           php bin/console doctrine:database:drop --force --if-exists --env=test
