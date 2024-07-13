@@ -1,10 +1,19 @@
-### PHP Code Beautifier and Fixer
+# PHP Code Beautifier and Fixer
 
-How to install ?
-`composer require --dev squizlabs/php_codesniffer`
+## Installation
+To install the PHP Code Beautifier and Fixer, run the following command:
 
-How to use it ?
-`php vendor/bin/phpcbf path/of/your/file`
+```sh
+composer require --dev squizlabs/php_codesniffer
+```
 
-Exemple: 
-`php vendor/bin/phpcbf src/Controller/LandingHomeController.php`
+## Usage
+To use the PHP Code Beautifier and Fixer, run the following command:
+
+```sh
+php vendor/bin/phpcbf path/of/your/file
+```
+Example:
+```sh
+php vendor/bin/phpcbf src/Controller/LandingHomeController.php
+```
