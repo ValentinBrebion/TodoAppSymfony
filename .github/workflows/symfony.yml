@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Run local-php-security-checker
         run: local-php-security-checker --path=./composer.lock
 
@@ -21,7 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Run PHPCS
         run: phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
 
@@ -29,7 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Install Composer Dependencies
         run: composer install
       - name: Run PHPStan
@@ -39,21 +42,27 @@ jobs:
     runs-on: ubuntu-latest
     container: jakzal/phpqa:php8.1
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Run Twig Lint
         run: twig-lint lint ./templates
 
   phpunit:
     runs-on: ubuntu-latest
     container: nicolasunivlr/php:lp2022
-    steps:
-      - uses: actions/checkout@v4
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: devops-test
+        ports:
+          - 8306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Install Composer Dependencies
         run: composer install
-      - name: Debug Database Connection
-        run: |
-          echo "Testing database connection..."
-          telnet mariadb 3306
       - name: Setup Database
         run: |
           php bin/console doctrine:database:drop --force --if-exists --env=test
@@ -62,12 +71,17 @@ jobs:
           php bin/console doctrine:fixtures:load --env=test --no-interaction
       - name: Run PHPUnit Tests
         run: php bin/phpunit
-    services:
-      mariadb:
-        image: mariadb:10.6
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: todoapp
-        ports:
-          - 8306:8080
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup SSH agent
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.PROD_KEY }}" | tr -d "\r" | ssh-add -
+      - name: Deploy to Production
+        run: |
+          dep deploy
+          dep database:migrate
