@@ -1,39 +1,49 @@
-stages:
-  - test
-  - deploy
+name: Symfony CI
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
-.common: &common
-  image: jakzal/phpqa:php8.1
-  stage: test
-  only:
-      - merge_requests
+    branches:
       - master
+  pull_request:
+    branches:
+      - master
+
 jobs:
   security-checker:
-    <<: *common
+    image: jakzal/phpqa:php8.1
+    stage: test
+    only:
+      - merge_requests
+      - master
     script:
       - local-php-security-checker --path=./composer.lock
 
   phpcs:
-    <<: *common
+    image: jakzal/phpqa:php8.1
+    stage: test
+    only:
+      - merge_requests
+      - master
     script:
       - phpcs -v --standard=PSR12 --error-severity=1 --warning-severity=8 --ignore=./src/Kernel.php ./src
 
   phpstan:
-    <<: *common
+    image: jakzal/phpqa:php8.1
+    stage: test
+    only:
+      - merge_requests
+      - master
     before_script:
       - composer install
     script:
       - phpstan analyse ./src --level 3
 
   twig-lint:
-    <<: *common
+    image: jakzal/phpqa:php8.1
+    stage: test
+    only:
+      - merge_requests
+      - master
     script:
       - twig-lint lint ./templates
 
@@ -44,8 +54,8 @@ jobs:
       - merge_requests
       - main
     services:
-    - name: mariadb:10.6
-      alias: mariadb
+      - name: mariadb:10.6
+        alias: mariadb
     variables:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: todoapp
@@ -54,8 +64,7 @@ jobs:
       - composer install
       - php bin/console doctrine:database:drop --force --if-exists --env=test
       - php bin/console doctrine:database:create --env=test --no-interaction
-      - php bin/console doctrine:migration:migrate --env=test --no-interaction
-      - php bin/console doctrine:fixture:load --env=test --no-interaction
+      - php bin/console doctrine:migrations:migrate --env=test --no-interaction
+      - php bin/console doctrine:fixtures:load --env=test --no-interaction
     script:
       - php bin/phpunit
-
