@@ -2,12 +2,11 @@ stages:
   - test
   - deploy
 
-.common: &common
-  image: jakzal/phpqa:php8.1
-  stage: test
-  only:
-      - merge_requests
-      - master
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   security-checker:
