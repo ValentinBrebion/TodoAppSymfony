@@ -65,5 +65,5 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: todoapp
         ports:
-          - 3306:3306
+          - 8306:8080
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
