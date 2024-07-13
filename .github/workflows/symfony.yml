@@ -54,6 +54,7 @@ jobs:
         ports:
           - 3306:3306
         env:
+          MYSQL_HOST: localhost
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: todoapp
     env:
